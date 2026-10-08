@@ -69,9 +69,9 @@ footer{padding:8px 14px;color:var(--mut);font-size:12px;background:var(--pn);bor
 <button id="bExp" class="pri" data-i="exp"><span>Exportar MP3</span></button>
 <label class="zoom">Zoom <input id="zoom" type="range" min="10" max="300" value="60"></label>
 </div>
-<input type="file" id="file" accept="audio/*,.mp3" multiple hidden>
+<input type="file" id="file" accept="audio/*,video/*,.mp3,.mp4,.m4a,.mov,.webm,.mkv,.ogg,.wav" multiple hidden>
 <main id="sc"><div id="inner"><div id="rows"></div><div id="ph"></div></div>
-<div id="empty">Importe ou arraste arquivos MP3 aqui.<br>Toque no clipe para selecionar, arraste para mover e puxe as bordas para aparar. Toque na régua para posicionar o cursor e use ✂ para dividir.</div></main>
+<div id="empty">Importe ou arraste arquivos de áudio ou vídeo (só o áudio será usado) aqui.<br>Toque no clipe para selecionar, arraste para mover e puxe as bordas para aparar. Toque na régua para posicionar o cursor e use ✂ para dividir.</div></main>
 <footer id="info"></footer>
 <div id="out" hidden><div><strong id="oT">MP3 pronto</strong><audio id="oA" controls></audio>
 <span id="oS" style="color:var(--mut)"></span>
@@ -166,7 +166,7 @@ function delT(){if(tracks.length<2)return;mut(()=>{clips=clips.filter(c=>c.tr!==
 async function imp(files){for(const f of files){try{info('Decodificando '+f.name+'…');
  const buf=await AC.decodeAudioData(await f.arrayBuffer());stop();snap();
  clips.push({id:++uid,tr:cur,buf,off:0,dur:buf.duration,pos:end(cur),name:f.name.replace(/\.[^.]+$/,''),hue:(uid*57)%360})}
- catch(e){alert('Não foi possível ler: '+f.name)}}render();upd()}
+ catch(e){alert('Não foi possível extrair o áudio de: '+f.name+'\nO navegador pode não suportar o formato/codec deste arquivo (tente MP4, WebM, MOV ou MP3).')}}render();upd()}
 async function exportMp3(){if(!clips.length)return;if(!window.lamejs){alert('Codificador MP3 não carregou. Verifique a conexão.');return}
  stop();const T=total(),sr=44100,b=$('#bExp');b.disabled=true;info('Renderizando…');
  try{const oc=new OfflineAudioContext(2,Math.ceil(T*sr),sr);
@@ -200,7 +200,7 @@ $('#bAddT').onclick=addT;$('#bDelT').onclick=delT;
 $('#zoom').oninput=e=>{pps=+e.target.value;render()};
 addEventListener('resize',render);
 addEventListener('dragover',e=>e.preventDefault());
-addEventListener('drop',e=>{e.preventDefault();imp([...e.dataTransfer.files].filter(f=>/audio|\.mp3$/i.test(f.type+f.name)))});
+addEventListener('drop',e=>{e.preventDefault();imp([...e.dataTransfer.files].filter(f=>/audio|video|\.(mp3|mp4|m4a|mov|webm|mkv|ogg|wav)$/i.test(f.type+f.name)))});
 addEventListener('keydown',e=>{if(/INPUT|SELECT/.test(e.target.tagName))return;const k=e.key.toLowerCase();
  if(k===' '){e.preventDefault();play()}else if(k==='s')split();else if(k==='delete'||k==='backspace')del();else if(k==='z'&&(e.ctrlKey||e.metaKey)){e.preventDefault();$('#bUndo').click()}});
 document.querySelectorAll('[data-i]').forEach(b=>b.insertAdjacentHTML('afterbegin',ic(b.dataset.i)));setPlay();render();upd();
