@@ -59,11 +59,11 @@ footer{padding:8px 14px;color:var(--mut);font-size:12px;background:var(--pn);bor
 .mk.on u{background:#ff4d6d;width:4px;left:-2px}.mk.on b{background:#ff4d6d;color:#fff}
 #phH{position:absolute;top:calc(var(--st,0px) + 4px);width:28px;height:36px;margin-left:-14px;outline:none;user-select:none;-webkit-touch-callout:none;background:#ff4d6d;border-radius:6px 6px 10px 10px;z-index:9;cursor:ew-resize;touch-action:none;box-shadow:0 1px 3px #0006}
 #phH:after{content:"";position:absolute;left:9px;top:10px;width:6px;height:16px;border-left:2px solid #fff;border-right:2px solid #fff}
-#sp{flex:none;max-height:44vh;display:flex;flex-direction:column;border-top:1px solid var(--bd)}
+#sp{flex:none;max-height:42vh;display:flex;flex-direction:column;border-top:1px solid var(--bd)}
 #sp[hidden]{display:none}
 #sp label{display:flex;align-items:center;gap:6px;color:var(--mut)}
-#sp input[type=number]{width:64px;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;min-height:40px;padding:0 6px}
-#spL{overflow:auto;min-height:0}
+#sp input[type=number]{width:54px;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;min-height:40px;padding:0 6px}
+#spL{overflow:auto;min-height:0;max-height:24vh}#spPar{gap:4px 12px}#spL[hidden],#spPar[hidden]{display:none}#sp .bar{padding:6px 8px}#spBar{flex-wrap:nowrap}#spBar button{flex:1 1 0;min-width:0;padding:0 6px}#spBar button.pri{flex:1.4 1 0}#sp em{font-style:normal}@media(max-width:699px){#spBar button span,#spBar button em{display:none}#spBar #spLst span,#spBar #spEx span{display:inline}#spBar button.pri svg{flex:none}}
 .sg{display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--bd);background:var(--pn)}
 .sg .nm{flex:1;min-width:80px;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;min-height:36px;padding:0 8px}
 .sg small{color:var(--mut);white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -101,16 +101,20 @@ footer{padding:8px 14px;color:var(--mut);font-size:12px;background:var(--pn);bor
 <main id="sc"><div id="inner"><div id="rows"></div><div id="ph"></div><div id="mks"></div><div id="phH" tabindex="0" title="Arraste a agulha. Com ela selecionada, use ← → para ajuste fino"></div><div id="nd" hidden><button data-d="-1" title="Mover para trás">◀</button><button data-d="1" title="Mover para frente">▶</button></div></div>
 <div id="empty">Importe ou arraste arquivos de áudio ou vídeo (só o áudio será usado) aqui.<br>Toque no clipe para selecionar, arraste para mover e puxe as bordas para aparar. Toque na régua para posicionar o cursor e use Cortar para dividir. Para um áudio longo com várias músicas, use Dividir em músicas.</div></main>
 <section id="sp" hidden>
-<div class="bar">
+<div class="bar" id="spPar" hidden>
 <label title="Quanto abaixo do volume típico o som precisa estar para contar como silêncio. Menor = detecta mais pausas (ex.: com aplausos).">Limiar <input id="spSn" type="range" min="10" max="50" value="30"><output id="spSo">−30 dB</output></label>
-<label>Silêncio mín. <input id="spSil" type="number" min="0.3" max="10" step="0.1" value="1.5">s</label>
-<label>Música mín. <input id="spMin" type="number" min="5" max="1200" step="5" value="30">s</label>
-<button id="spDet" class="pri" data-i="dv"><span>Detectar</span></button>
+<label title="Duração mínima do silêncio entre músicas">Silêncio <input id="spSil" type="number" min="0.3" max="10" step="0.1" value="1.5">s</label>
+<label title="Duração mínima de cada música">Música <input id="spMin" type="number" min="5" max="1200" step="5" value="30">s</label>
+</div>
+<div class="bar" id="spBar">
+<button id="spDet" class="pri" data-i="dv" title="Detectar silêncios e criar marcações"><span>Detectar</span></button>
 <button id="spAdd" data-i="plus" title="Adicionar marcação no cursor (M)"><span>Marcação</span></button>
-<button id="spDel" data-i="del" title="Excluir marcação selecionada"><span>Excluir marcação</span></button>
-<button id="spTr" data-i="play" title="Tocar a partir do ponto exato da marcação selecionada"><span>Ouvir do marcador</span></button>
+<button id="spDel" data-i="del" title="Excluir marcação selecionada"><span>Excluir</span></button>
+<button id="spTr" data-i="play" title="Tocar a partir do ponto exato da marcação selecionada"><span>Ouvir marcador</span></button>
+<button id="spCfg" data-i="cfg" title="Ajustes da detecção (limiar, silêncio e duração mínimos)"><span>Ajustes</span></button>
+<button id="spLst" data-i="lst" title="Mostrar / ocultar lista de músicas"><span>Lista</span></button>
 <button id="spEx" class="pri" data-i="exp"><span>Exportar</span></button>
-</div><div id="spL"></div></section>
+</div><div id="spL" hidden></div></section>
 <footer id="info"></footer>
 <div id="out" hidden><div><strong id="oT">MP3 pronto</strong><audio id="oA" controls></audio>
 <span id="oS" style="color:var(--mut)"></span>
@@ -127,7 +131,7 @@ const ICO={imp:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2
 play:'<path fill="currentColor" d="M7 4.5v15l12-7.5z"/>',pause:'<path d="M8 5v14M16 5v14"/>',
 first:'<path d="M6 5v14M18 5l-9 7 9 7z"/>',last:'<path d="M18 5v14M6 5l9 7-9 7z"/>',
 split:'<g stroke-width="1.5"><rect x="2.67" y="6.82" width="6.91" height="10.37" rx="1"/><rect x="14.42" y="6.82" width="6.91" height="10.37" rx="1"/><path d="M12 6.82v10.37"/></g>',
-dv:'<path d="M3 12h.01M6 9.5v5M9.5 7v10M14.5 7v10M18 9.5v5M21 12h.01"/><path d="M12 3v18" stroke-dasharray="2.2 2.4"/>',plus:'<path d="M12 5v14M5 12h14"/>',zout:'<path d="M5 12h14"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',left:'<path d="M4 5v14M20 12H8M12 8l-4 4 4 4"/>',
+dv:'<path d="M3 12h.01M6 9.5v5M9.5 7v10M14.5 7v10M18 9.5v5M21 12h.01"/><path d="M12 3v18" stroke-dasharray="2.2 2.4"/>',plus:'<path d="M12 5v14M5 12h14"/>',zout:'<path d="M5 12h14"/>',cfg:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',lst:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',left:'<path d="M4 5v14M20 12H8M12 8l-4 4 4 4"/>',
 dup:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
 del:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>',
 join:'<path d="M4 12h5M8 9l3 3-3 3M20 12h-5M16 9l-3 3 3 3"/>',undo:'<path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/>',
@@ -256,8 +260,8 @@ function toLeft(){const c=clips.find(k=>k.id===sel);if(!c)return;
 function mkR(){spNorm();$('#mks').innerHTML=spOn()?marks.map((t,i)=>`<div class="mk${i===mk?' on':''}" data-i="${i}" style="left:${HW+t*pps}px"><u></u><b>${fmt(t)}</b></div>`).join(''):'';spR()}
 function spNorm(){const n=marks.length+1;while(spN.length<n){spN.push(null);spO.push(true)}spN.length=spO.length=n}
 function spR(){if(!spOn())return;const k=spO.filter(Boolean).length;
- $('#spL').innerHTML=segs().map((g,i)=>`<div class="sg${spO[i]?'':' off'}" data-i="${i}"><input type="checkbox" class="ck" ${spO[i]?'checked':''} title="Incluir na exportação"><b>${pad(i+1)}</b><input class="nm" value="${(spN[i]||'').replace(/"/g,'&quot;')}" placeholder="Faixa ${pad(i+1)}"><small>${fmt(g.s)} → ${fmt(g.e)} · ${fmt(g.e-g.s)}</small><button data-a="p" title="Ouvir">${ic('play')}</button><button data-a="d" title="Exportar só esta">${ic('exp')}</button></div>`).join('');
- $('#spEx span').textContent='Exportar '+k+(k===1?' MP3':' MP3 (ZIP)');$('#spEx').disabled=!k||!clips.length;$('#spDel').disabled=$('#spTr').disabled=mk<0;$('#spAdd').disabled=$('#spDet').disabled=!clips.length}
+ if(!$('#spL').hidden)$('#spL').innerHTML=segs().map((g,i)=>`<div class="sg${spO[i]?'':' off'}" data-i="${i}"><input type="checkbox" class="ck" ${spO[i]?'checked':''} title="Incluir na exportação"><b>${pad(i+1)}</b><input class="nm" value="${(spN[i]||'').replace(/"/g,'&quot;')}" placeholder="Faixa ${pad(i+1)}"><small>${fmt(g.s)} → ${fmt(g.e)} · ${fmt(g.e-g.s)}</small><button data-a="p" title="Ouvir">${ic('play')}</button><button data-a="d" title="Exportar só esta">${ic('exp')}</button></div>`).join('');
+ $('#spEx span').innerHTML='<em>Exportar </em>'+k+'<em>'+(k===1?' MP3':' MP3 (ZIP)')+'</em>';$('#spLst span').innerHTML='<em>Lista </em>'+segs().length;$('#spEx').disabled=!k||!clips.length;$('#spDel').disabled=$('#spTr').disabled=mk<0;$('#spAdd').disabled=$('#spDet').disabled=!clips.length}
 function spAdd(){const t=head,T=total();if(!clips.length)return;if(t<.1||t>T-.1||marks.some(x=>Math.abs(x-t)<.3)){info('Posicione a agulha em um ponto livre para adicionar a marcação.');return}
  stop();snap();const k=marks.filter(x=>x<t).length;marks.splice(k,0,t);spN.splice(k+1,0,null);spO.splice(k+1,0,true);mk=k;sel=null;render();upd()}
 function spRem(){if(mk<0)return;stop();snap();marks.splice(mk,1);spN.splice(mk+1,1);spO.splice(mk+1,1);mk=-1;render();upd()}
@@ -299,7 +303,7 @@ async function spExp(only){if(!window.lamejs){alert('Codificador MP3 não carreg
   else{const a=document.createElement('a');a.href=URL.createObjectURL(one?new Blob([files[0].data],{type:'audio/mpeg'}):zipN(files));a.download=one?files[0].name:zn;a.click();info('Exportado: '+(one?files[0].name:zn))}}
  catch(e){alert('Erro ao exportar: '+e.message)}B.forEach(b=>b.disabled=false);spR()}
 $('#bDv').onclick=()=>{$('#sp').hidden=spOn();$('#bDv').classList.toggle('pri',spOn());render()};
-$('#spDet').onclick=spDet;$('#spAdd').onclick=spAdd;$('#spDel').onclick=spRem;$('#spEx').onclick=()=>spExp();
+$('#spCfg').onclick=()=>{const h=$('#spPar');h.hidden=!h.hidden;$('#spCfg').classList.toggle('pri',!h.hidden);render()};$('#spLst').onclick=()=>{const h=$('#spL');h.hidden=!h.hidden;$('#spLst').classList.toggle('pri',!h.hidden);spR();render()};$('#spDet').onclick=spDet;$('#spAdd').onclick=spAdd;$('#spDel').onclick=spRem;$('#spEx').onclick=()=>spExp();
 $('#spTr').onclick=()=>{if(mk>=0){const t=marks[mk];stop();head=t;ph();ensureVis(t);play()}};
 $('#spSn').oninput=e=>$('#spSo').textContent='−'+e.target.value+' dB';
 $('#spL').onchange=e=>{const r=e.target.closest('.sg');if(r&&e.target.classList.contains('ck')){spO[+r.dataset.i]=e.target.checked;spR()}};
